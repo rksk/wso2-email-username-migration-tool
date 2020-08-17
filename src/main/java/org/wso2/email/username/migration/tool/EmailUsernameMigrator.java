@@ -12,7 +12,7 @@ class EmailUsernameMigrator {
 
     private static int usercount;
     private static final int ITERATION_SIZE = 1000;
-    private static final int THRESHOLD = 10000;
+    private static final int THRESHOLD = 9999999;
     private static final boolean DEBUG = true;
 
     public static void main(String[] args) {
@@ -72,7 +72,7 @@ class EmailUsernameMigrator {
             try {
                 DBUtils.closeConnection(DBUtils.getREGDBConnection());
                 DBUtils.closeConnection(DBUtils.getUMDBConnection());
-            } catch (IdentityException e) {
+            } catch (IdentityException | SQLException e) {
                 System.out.println("=== An error occurred while closing the DB connection ===");
                 e.printStackTrace();
                 System.out.println("=======================");
@@ -80,12 +80,12 @@ class EmailUsernameMigrator {
         }
     }
 
-    private void populateEmailClaim(HashMap userList) throws IdentityException {
+    private void populateEmailClaim(HashMap<String, String> userList) throws IdentityException, SQLException {
 
         HashMap toInsert = new HashMap<String, String>();
         HashMap toUpdate = new HashMap<String, String>();
-        for(Object entry : userList.entrySet()) {
-            String username = (String)((Map.Entry)entry).getKey();
+        for(Map.Entry<String, String> entry : userList.entrySet()) {
+            String username = entry.getKey();
             String existingEmail = UserDAO.getEmailOfUser(username);
             String newEmail = username.trim();
             if (existingEmail == null) {

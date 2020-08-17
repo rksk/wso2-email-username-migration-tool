@@ -10,7 +10,7 @@ import java.util.*;
 
 public class UserDAO {
 
-    public static HashMap getUserListToRename(int chunkSize) throws IdentityException {
+    public static HashMap getUserListToRename(int chunkSize) throws IdentityException, SQLException {
 
         Connection connection = DBUtils.getUMDBConnection();
         PreparedStatement prepStmt = null;
@@ -32,7 +32,7 @@ public class UserDAO {
         return userList;
     }
 
-    public static String getEmailOfUser(String username) throws IdentityException {
+    public static String getEmailOfUser(String username) throws IdentityException, SQLException {
 
         Connection connection = DBUtils.getUMDBConnection();
         PreparedStatement prepStmt = null;
@@ -53,15 +53,15 @@ public class UserDAO {
         return email;
     }
 
-    public static void updateEmailOfUser(HashMap userList) throws IdentityException {
+    public static void updateEmailOfUser(HashMap<String, String> userList) throws IdentityException, SQLException {
 
         Connection connection = DBUtils.getUMDBConnection();
         PreparedStatement prepStmt = null;
         try {
             prepStmt = connection.prepareStatement(SQLQueries.UPDATE_USER_EMAIL_SQL);
-            for(Object entry : userList.entrySet()) {
-                String username = (String)((Map.Entry)entry).getKey();
-                String email = (String)((Map.Entry)entry).getValue();
+            for(Map.Entry<String, String> entry : userList.entrySet()) {
+                String username = entry.getKey();
+                String email = entry.getValue();
                 prepStmt.setString(1, email);
                 prepStmt.setString(2, username);
                 prepStmt.addBatch();
@@ -74,15 +74,15 @@ public class UserDAO {
         }
     }
 
-    public static void addEmailOfUser(HashMap userList) throws IdentityException {
+    public static void addEmailOfUser(HashMap<String, String> userList) throws IdentityException, SQLException {
 
         Connection connection = DBUtils.getUMDBConnection();
         PreparedStatement prepStmt = null;
         try {
             prepStmt = connection.prepareStatement(SQLQueries.ADD_USER_EMAIL_SQL);
-            for(Object entry : userList.entrySet()) {
-                String username = (String)((Map.Entry)entry).getKey();
-                String email = (String)((Map.Entry)entry).getValue();
+            for(Map.Entry<String, String> entry : userList.entrySet()) {
+                String username = entry.getKey();
+                String email = entry.getValue();
                 prepStmt.setString(1, username);
                 prepStmt.setString(2, email);
                 prepStmt.addBatch();
@@ -91,11 +91,11 @@ public class UserDAO {
         } catch (SQLException e) {
             throw new IdentityException("Error while inserting email addresses.", e);
         } finally {
-            DBUtils.closeResultSetAndStatement(null, prepStmt);
+            DBUtils.closeStatement(prepStmt);
         }
     }
 
-    public static void updateUMtables(HashMap userList) throws IdentityException {
+    public static void updateUMtables(HashMap<String, String> userList) throws IdentityException, SQLException {
 
         Connection connection = DBUtils.getUMDBConnection();
         PreparedStatement[] prepStmts = new PreparedStatement[3];
@@ -103,9 +103,9 @@ public class UserDAO {
             prepStmts[0] = connection.prepareStatement(SQLQueries.UPDATE_UM_USER_SQL);
             prepStmts[1] = connection.prepareStatement(SQLQueries.UPDATE_UM_HYBRID_REMEMBER_ME_SQL);
             prepStmts[2] = connection.prepareStatement(SQLQueries.UPDATE_UM_HYBRID_USER_ROLE_SQL);
-            for(Object entry : userList.entrySet()) {
-                String oldUsername = (String)((Map.Entry)entry).getKey();
-                String newUsername = (String)((Map.Entry)entry).getValue();
+            for(Map.Entry<String, String> entry : userList.entrySet()) {
+                String oldUsername = entry.getKey();
+                String newUsername = entry.getValue();
                 for (PreparedStatement prepStmt : prepStmts) {
                     prepStmt.setString(1, newUsername);
                     prepStmt.setString(2, oldUsername);
@@ -123,7 +123,7 @@ public class UserDAO {
     }
 
 
-    public static void updateIDNtables(HashMap userList) throws IdentityException {
+    public static void updateIDNtables(HashMap<String, String> userList) throws IdentityException, SQLException {
 
         Connection connection = DBUtils.getREGDBConnection();
         PreparedStatement[] prepStmts = new PreparedStatement[5];
@@ -133,9 +133,9 @@ public class UserDAO {
             prepStmts[2] = connection.prepareStatement(SQLQueries.UPDATE_IDN_IDENTITY_USER_DATA_SQL);
             prepStmts[3] = connection.prepareStatement(SQLQueries.UPDATE_IDN_RECOVERY_DATA_SQL);
             prepStmts[4] = connection.prepareStatement(SQLQueries.UPDATE_SP_APP_SQL);
-            for(Object entry : userList.entrySet()) {
-                String oldUsername = (String)((Map.Entry)entry).getKey();
-                String newUsername = (String)((Map.Entry)entry).getValue();
+            for(Map.Entry<String, String> entry : userList.entrySet()) {
+                String oldUsername = entry.getKey();
+                String newUsername = entry.getValue();
                 for (PreparedStatement prepStmt : prepStmts) {
                     prepStmt.setString(1, newUsername);
                     prepStmt.setString(2, oldUsername);
@@ -152,15 +152,15 @@ public class UserDAO {
         }
     }
 
-    public static void updateREGtables(HashMap userList) throws IdentityException {
+    public static void updateREGtables(HashMap<String, String> userList) throws IdentityException, SQLException {
 
         Connection connection = DBUtils.getREGDBConnection();
         PreparedStatement prepStmt = null;
         try {
             prepStmt = connection.prepareStatement(SQLQueries.UPDATE_REG_PROPERTY_SQL);
-            for(Object entry : userList.entrySet()) {
-                String oldUsername = (String)((Map.Entry)entry).getKey();
-                String newUsername = (String)((Map.Entry)entry).getValue();
+            for(Map.Entry<String, String> entry : userList.entrySet()) {
+                String oldUsername = entry.getKey();
+                String newUsername = entry.getValue();
                 prepStmt.setString(1, newUsername);
                 prepStmt.setString(2, oldUsername);
                 prepStmt.addBatch();

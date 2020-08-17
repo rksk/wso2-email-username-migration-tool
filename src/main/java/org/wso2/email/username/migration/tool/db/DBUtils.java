@@ -10,9 +10,9 @@ public class DBUtils {
     private static Connection regdb_connection = null;
     private static Connection umdb_connection = null;
 
-    public static Connection getREGDBConnection() throws IdentityException {
+    public static Connection getREGDBConnection() throws IdentityException, SQLException {
 
-        if (regdb_connection == null) {
+        if (regdb_connection == null || !regdb_connection.isValid(5)) {
             if (configParser == null) {
                 configParser = new ConfigParser();
             }
@@ -28,9 +28,9 @@ public class DBUtils {
         return regdb_connection;
     }
 
-    public static Connection getUMDBConnection() throws IdentityException {
+    public static Connection getUMDBConnection() throws IdentityException, SQLException {
 
-        if (umdb_connection == null) {
+        if (umdb_connection == null || !umdb_connection.isValid(5)) {
             if (configParser == null) {
                 configParser = new ConfigParser();
             }
